@@ -14,10 +14,6 @@ import SiteFooter from "../components/SiteFooter.vue";
 
 <style scoped>
 .home-container {
-  /* display: flex;
-  flex-direction: row;
-  align-items: start;
-  justify-content: start; */
   width: 100vw;
   height: 100vh;
 }

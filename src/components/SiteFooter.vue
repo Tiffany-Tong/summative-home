@@ -8,10 +8,15 @@
 </template>
 
 <style scoped>
-h1 {
+p {
+  display: flex;
+  justify-content: center;
   color: black;
   text-align: center;
-  font-size: 50px;
+  font-size: 20px;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 </style>

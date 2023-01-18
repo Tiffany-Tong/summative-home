@@ -2,15 +2,18 @@
 import { ref } from "vue";
 import axios from "axios";
 import SiteModal from "../components/SiteModal.vue";
+import { useStore } from "../store/index.js"
+
+const store = useStore();
+
+const genre = ref ();
 
 let modalId = ref(null);
 let openModal = ref(false);
 let trendingMovies = ref(null);
-
 const props = defineProps({
   movieId: String,
 });
-
 const getData = async (url, params) => {
   try {
     return await axios.get(url, params);
@@ -18,7 +21,6 @@ const getData = async (url, params) => {
     console.log(error);
   }
 };
-
 const getMovies = async () => {
   const movie = (
     await getData("https://api.themoviedb.org/3/trending/movie/week", {
@@ -37,7 +39,6 @@ const getMovies = async () => {
   console.log(trendingMovies);
 };
 getMovies();
-
 const showModal = (id) => {
   console.log(id);
   modalId.value = `${id}`;
@@ -46,7 +47,10 @@ const showModal = (id) => {
 </script>
 
 <template>
-  <h1>Trending Movies!</h1>
+  <RouterLink to="/cart" custom v-slot="{ navigate }">
+    <button @click="navigate">Cart</button>
+  </RouterLink>
+
   <div class="images">
     <div class="image-container" v-for="movies in trendingMovies">
       <img

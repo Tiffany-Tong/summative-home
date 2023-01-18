@@ -1,12 +1,10 @@
 <script setup>
 import { ref, watch } from "vue";
 import axios from "axios";
-
 const props = defineProps({
   show: Boolean,
   id: String,
 });
-
 let movie = ref(null);
 const getData = async (url, params) => {
   try {
@@ -15,7 +13,6 @@ const getData = async (url, params) => {
     console.log(error);
   }
 };
-
 const getMovieData = async (movieId) => {
   const extraData = await getData(`https://api.themoviedb.org/3/movie/${movieId}`, {
     params: {
@@ -23,12 +20,10 @@ const getMovieData = async (movieId) => {
       append_to_response: "videos",
     },
   });
-
   console.log(movieId);
   movie.value = extraData.data;
   console.log(movie.value);
 };
-
 watch(() => {
   getMovieData(props.id);
 });
