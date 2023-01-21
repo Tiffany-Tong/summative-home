@@ -4,7 +4,7 @@ import { useStore } from "../store/index.js";
 const store = useStore();
 const props = defineProps(["id"]);
 const emits = defineEmits(["toggleModal"]);
-let data = (
+let movie = (
   await axios.get(`https://api.themoviedb.org/3/movie/${props.id}`, {
     params: {
       api_key: "c6b2390c3ab4bfbd0e064d952df483c9",
@@ -18,23 +18,23 @@ let data = (
     <div class="modal-outer-container" @click.self="emits('toggleModal')">
       <div class="modal-inner-container">
         <button class="close-button" @click="emits('toggleModal')">X</button>
-        <h1>{{ data.title }}</h1>
+        <h1>{{ movie.title }}</h1>
         <h2>Overview:</h2>
-        <p2>{{ data.overview }}</p2>
+        <p2>{{ movie.overview }}</p2>
         <h3>Tagline:</h3>
-        <p3> {{ data.tagline }}</p3>
+        <p3> {{ movie.tagline }}</p3>
         <h4>Release Date:</h4>
-        <p4>{{ data.release_date }}</p4>
+        <p4>{{ movie.release_date }}</p4>
         <div class="movie-poster">
-          <img :src="`https://image.tmdb.org/t/p/w500${data.poster_path}`" />
+          <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" />
         </div>
         <button
           @click="
             store.addToCart(props.id, {
-              id: data.id,
-              poster: data.poster_path,
-              title: data.title,
-              date: data.release_date,
+              id: movie.id,
+              poster: movie.poster_path,
+              title: movie.title,
+              date: movie.release_date,
             })
           "
         >
