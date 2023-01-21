@@ -5,16 +5,11 @@ import SiteFooter from "../components/SiteFooter.vue";
 </script>
 
 <template>
-  <div class="home-container">
+  <div>
     <SiteHeader />
     <SiteHero />
     <SiteFooter />
   </div>
 </template>
 
-<style scoped>
-.home-container {
-  width: 100vw;
-  height: 100vh;
-}
-</style>
+<style scoped></style>

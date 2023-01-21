@@ -1,137 +1,88 @@
 <script setup>
-import { ref, watch } from "vue";
 import axios from "axios";
-const props = defineProps({
-  show: Boolean,
-  id: String,
-});
-let movie = ref(null);
-const getData = async (url, params) => {
-  try {
-    return await axios.get(url, params);
-  } catch (error) {
-    console.log(error);
-  }
-};
-const getMovieData = async (movieId) => {
-  const extraData = await getData(`https://api.themoviedb.org/3/movie/${movieId}`, {
+import { useStore } from "../store/index.js";
+const store = useStore();
+const props = defineProps(["id"]);
+const emits = defineEmits(["toggleModal"]);
+let data = (
+  await axios.get(`https://api.themoviedb.org/3/movie/${props.id}`, {
     params: {
       api_key: "c6b2390c3ab4bfbd0e064d952df483c9",
-      append_to_response: "videos",
     },
-  });
-  console.log(movieId);
-  movie.value = extraData.data;
-  console.log(movie.value);
-};
-watch(() => {
-  getMovieData(props.id);
-});
+  })
+).data;
 </script>
 
 <template>
-  <div v-if="show" class="modal" @click="$emit('close')">
-    <div class="modal-container" @click.stop="">
-      <button @click="$emit('close')" class="close-button">X</button>
-      <div class="modal-content-container">
-        <div class="modal-inner-container">
-          <h3 class="movie-title">{{ movie.title }}</h3>
-          <p class="movie-overview">{{ movie.overview }}</p>
-          <div class="movie-poster">
-            <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" />
-          </div>
-          <div
-            class="movie-trailer"
-            v-if="
-              movie.videos.results.filter((video) => video.type === 'Trailer').length != 0
-            "
-          >
-            <iframe
-              :src="`https://www.youtube.com/embed/${
-                movie.videos.results.filter((video) => video.type === 'Trailer').at(0).key
-              }`"
-              frameborder=""
-              class="movie-trailer"
-            ></iframe>
-            <a
-              :href="`https://www.youtube.com/watch?v=${
-                movie.videos.results.filter((video) => video.type === 'Trailer').at(0).key
-              }`"
-            >
-              <p>Movie Trailer</p>
-            </a>
-          </div>
-          <div class="movie-release-date">
-            <h3>Release Date</h3>
-            <h4>{{ movie.release_date }}</h4>
-          </div>
+  <Teleport to="body">
+    <div class="modal-outer-container" @click.self="emits('toggleModal')">
+      <div class="modal-inner-container">
+        <button class="close-button" @click="emits('toggleModal')">X</button>
+        <h1>{{ data.title }}</h1>
+        <h2>Overview:</h2>
+        <p2>{{ data.overview }}</p2>
+        <h3>Tagline:</h3>
+        <p3> {{ data.tagline }}</p3>
+        <h4>Release Date:</h4>
+        <p4>{{ data.release_date }}</p4>
+        <div class="movie-poster">
+          <img :src="`https://image.tmdb.org/t/p/w500${data.poster_path}`" />
         </div>
+        <button
+          @click="
+            store.addToCart(props.id, {
+              id: data.id,
+              poster: data.poster_path,
+              title: data.title,
+              date: data.release_date,
+            })
+          "
+        >
+          Purchase
+        </button>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>
-.modal {
-  display: grid;
+.modal-outer-container {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
   background: #00000099;
+  z-index: 3;
 }
-.modal-container {
-  background: white;
-  width: 85vw;
-  height: 70vh;
+.modal-outer-container .modal-inner-container {
+  background-color: white;
+  color: black;
+  width: clamp(280px, 100%, 800px);
+  height: 400px;
+  position: relative;
+  width: 60vw;
+  height: 100vh;
   margin: auto;
-}
-.modal-content-container {
   display: grid;
-  width: 100%;
-  height: 100%;
+  grid-column: 4;
 }
-.modal-inner-container {
-  display: grid;
-  width: 100%;
-  height: 100%;
-}
-.movie-title {
-  grid-column: span 6;
-  text-align: center;
-  font-size: 180%;
-}
-.movie-poster {
-  grid-column: span 2;
-  width: 100%;
-  height: 100%;
-}
-.movie-poster img,
-.movie-poster a {
-  width: 90%;
-  max-width: 200px;
-  max-height: 300px;
-}
-.movie-overview {
-  grid-column: span 6;
-  text-align: center;
-}
-.movie-trailer {
-  grid-column: span 4;
-  text-align: center;
-  width: 90%;
-  height: 90%;
-}
-.movie-release-date {
-  grid-column: span 2;
-  text-align: center;
-}
-.close-button {
+.modal-outer-container .modal-inner-container .close-button {
   position: absolute;
-  right: 0.5px;
-  background: none;
-  cursor: pointer;
+  right: 0px;
+  padding: 1rem;
+  border: none;
   background: white;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: black;
 }
-.close-button:hover {
-  background: white;
+img {
+  width: 280px;
+  height: 400;
+  float: unset;
 }
 </style>
